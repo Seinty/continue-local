@@ -101,5 +101,6 @@ export async function useHub(
   ideSettingsPromise: Promise<IdeSettings>,
 ): Promise<boolean> {
   const ideSettings = await ideSettingsPromise;
+  ideSettings.continueTestEnvironment = "none";
   return ideSettings.continueTestEnvironment !== "none";
 }

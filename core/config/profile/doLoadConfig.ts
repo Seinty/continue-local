@@ -417,20 +417,11 @@ export default async function doLoadConfig(options: {
     workOsAccessToken,
   };
 
-  if (newConfig.analytics) {
-    // FIXME before re-enabling TeamAnalytics.setup() populate workspaceId in
-    //   controlPlaneProxyInfo to prevent /proxy/analytics/undefined/capture calls
-    //   where undefined is :workspaceId
-    // await TeamAnalytics.setup(
-    //   newConfig.analytics,
-    //   uniqueId,
-    //   ideInfo.extensionVersion,
-    //   controlPlaneClient,
-    //   controlPlaneProxyInfo,
-    // );
-  } else {
-    await TeamAnalytics.shutdown();
-  }
+  await TeamAnalytics.shutdown();
+
+  newConfig.allowAnonymousTelemetry = false;
+  newConfig.docs = [];
+  newConfig.disableIndexing = true;
 
   newConfig = await injectControlPlaneProxyInfo(
     newConfig,

@@ -119,12 +119,7 @@ export class Telemetry {
     Telemetry.uniqueId = uniqueId;
     Telemetry.os = os.platform();
     Telemetry.ideInfo = ideInfo;
-
-    if (!allow || process.env.NODE_ENV === "test") {
-      Telemetry.client = undefined;
-    } else if (!Telemetry.client) {
-      Telemetry.client = await Telemetry.getTelemetryClient();
-    }
+    Telemetry.client = undefined;
   }
 
   private static featureValueCache: Record<string, any> = {};
