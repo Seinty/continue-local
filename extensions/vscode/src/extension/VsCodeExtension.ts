@@ -31,11 +31,11 @@ import { registerAllPromptFilesCompletionProviders } from "../lang-server/prompt
 import EditDecorationManager from "../quickEdit/EditDecorationManager";
 import { QuickEdit } from "../quickEdit/QuickEditQuickPick";
 import { setupRemoteConfigSync } from "../stubs/activation";
-import { UriEventHandler } from "../stubs/uriHandler";
 import {
-  getControlPlaneSessionInfo,
-  WorkOsAuthProvider,
-} from "../stubs/WorkOsAuthProvider";
+  getLdapSessionInfo,
+  LdapAuthProvider,
+} from "../stubs/LdapAuthProvider";
+import { UriEventHandler } from "../stubs/uriHandler";
 import { Battery } from "../util/battery";
 import { FileSearch } from "../util/FileSearch";
 import { VsCodeIdeUtils } from "../util/ideUtils";
@@ -80,7 +80,7 @@ export class VsCodeExtension {
   webviewProtocolPromise: Promise<VsCodeWebviewProtocol>;
   private core: Core;
   private battery: Battery;
-  private workOsAuthProvider: WorkOsAuthProvider;
+  private workOsAuthProvider: LdapAuthProvider;
   private fileSearch: FileSearch;
   private uriHandler = new UriEventHandler();
   private completionProvider: ContinueCompletionProvider;
@@ -177,7 +177,7 @@ export class VsCodeExtension {
 
   constructor(context: vscode.ExtensionContext) {
     // Register auth provider
-    this.workOsAuthProvider = new WorkOsAuthProvider(context, this.uriHandler);
+    this.workOsAuthProvider = new LdapAuthProvider(context, this.uriHandler);
 
     void this.workOsAuthProvider.refreshSessions();
     context.subscriptions.push(this.workOsAuthProvider);
@@ -561,14 +561,17 @@ export class VsCodeExtension {
     // When GitHub sign-in status changes, reload config
     vscode.authentication.onDidChangeSessions(async (e) => {
       const env = await getControlPlaneEnv(this.ide.getIdeSettings());
-      if (e.provider.id === env.AUTH_TYPE) {
+      console.log(env.AUTH_TYPE);
+      // Добавьте проверку ID провайдера
+      if (e.provider.id === "ldap") {
+        // или env.AUTH_TYPE если он установлен в "ldap"
         void vscode.commands.executeCommand(
           "setContext",
           "continue.isSignedInToControlPlane",
           true,
         );
 
-        const sessionInfo = await getControlPlaneSessionInfo(true, false);
+        const sessionInfo = await getLdapSessionInfo(true, false);
         void this.core.invoke("didChangeControlPlaneSessionInfo", {
           sessionInfo,
         });
@@ -578,10 +581,6 @@ export class VsCodeExtension {
           "continue.isSignedInToControlPlane",
           false,
         );
-
-        if (e.provider.id === "github") {
-          this.configHandler.reloadConfig("Github sign-in status changed");
-        }
       }
     });
 

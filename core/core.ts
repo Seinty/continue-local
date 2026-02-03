@@ -615,7 +615,21 @@ export class Core {
       };
     });
 
-    on("llm/streamChat", (msg) => {
+    on("llm/streamChat", async (msg) => {
+      try {
+        const sessionInfo = await this.messenger.request(
+          "getControlPlaneSessionInfo",
+          {
+            silent: false,
+            useOnboarding: false,
+          },
+        );
+        if (!sessionInfo) {
+          throw new Error("Требуется авторизация для использования моделей");
+        }
+      } catch (error) {
+        throw new Error("Требуется авторизация для использования моделей");
+      }
       const abortController = this.addMessageAbortController(msg.messageId);
       return llmStreamChat(
         this.configHandler,
@@ -627,6 +641,20 @@ export class Core {
     });
 
     on("llm/complete", async (msg) => {
+      try {
+        const sessionInfo = await this.messenger.request(
+          "getControlPlaneSessionInfo",
+          {
+            silent: false,
+            useOnboarding: false,
+          },
+        );
+        if (!sessionInfo) {
+          throw new Error("Требуется авторизация для использования моделей");
+        }
+      } catch (error) {
+        throw new Error("Требуется авторизация для использования моделей");
+      }
       const { config } = await this.configHandler.loadConfig();
       const model = config?.selectedModelByRole.chat;
       if (!model) {

@@ -27,9 +27,9 @@ import { VerticalDiffManager } from "../diff/vertical/manager";
 import { addCurrentSelectionToEdit } from "../quickEdit/AddCurrentSelection";
 import EditDecorationManager from "../quickEdit/EditDecorationManager";
 import {
-  getControlPlaneSessionInfo,
-  WorkOsAuthProvider,
-} from "../stubs/WorkOsAuthProvider";
+  getLdapSessionInfo,
+  LdapAuthProvider,
+} from "../stubs/LdapAuthProvider";
 import { handleLLMError } from "../util/errorHandling";
 import { showTutorial } from "../util/tutorial";
 import { getExtensionUri } from "../util/vscode";
@@ -88,7 +88,7 @@ export class VsCodeMessenger {
     private readonly ide: VsCodeIde,
     private readonly verticalDiffManagerPromise: Promise<VerticalDiffManager>,
     private readonly configHandlerPromise: Promise<ConfigHandler>,
-    private readonly workOsAuthProvider: WorkOsAuthProvider,
+    private readonly workOsAuthProvider: LdapAuthProvider,
     private readonly editDecorationManager: EditDecorationManager,
     private readonly context: vscode.ExtensionContext,
     private readonly vsCodeExtension: VsCodeExtension,
@@ -755,10 +755,7 @@ export class VsCodeMessenger {
       this.ide.showToast(...msg.data);
     });
     this.onWebviewOrCore("getControlPlaneSessionInfo", async (msg) => {
-      return getControlPlaneSessionInfo(
-        msg.data.silent,
-        msg.data.useOnboarding,
-      );
+      return getLdapSessionInfo(msg.data.silent, msg.data.useOnboarding);
     });
     this.onWebviewOrCore("logoutOfControlPlane", async (msg) => {
       const sessions = await this.workOsAuthProvider.getSessions();

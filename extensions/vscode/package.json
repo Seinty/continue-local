@@ -57,6 +57,12 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "authentication": [
+      {
+        "id": "ldap",
+        "label": "Continue LDAP"
+      }
+    ],
     "languages": [
       {
         "filenames": [
