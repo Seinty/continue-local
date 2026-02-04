@@ -686,15 +686,23 @@ export class VsCodeMessenger {
         });
     });
 
+    // В методе registerMessageHandlers()  
+    this.onWebviewOrCore("getLdapSessions", async () => {  
+      const sessions = await this.workOsAuthProvider?.getSessions() || [];  
+      return { status: "success", content: sessions };  
+    });  
+      
     this.onWebviewOrCore("loginOfLdap", async () => {  
       try {  
-        await vscode.authentication.getSession("ldap", [], { createIfNone: true });  
-        void vscode.window.showInformationMessage("LDAP login successful");  
+        const session = await this.workOsAuthProvider?.createSession([]);  
+        void vscode.window.showInformationMessage("Successfully logged in to LDAP");  
+        return;  
       } catch (error) {  
         void vscode.window.showErrorMessage(`LDAP login failed: ${error}`);  
+        throw error;  
       }  
-    });
-
+    });  
+      
     this.onWebviewOrCore("logoutOfLdap", async () => {  
       const sessions = await this.workOsAuthProvider?.getSessions();  
       if (sessions && sessions.length > 0) {  

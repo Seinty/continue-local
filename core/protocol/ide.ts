@@ -95,6 +95,9 @@ export type ToIdeFromWebviewOrCoreProtocol = {
   logoutOfControlPlane: [undefined, void];
   reportError: [any, void];
   closeSidebar: [undefined, void];
+  "getLdapSessions": [undefined, { status: "success"; content: any[] }];  
+  "loginOfLdap": [undefined, void];  
+  "logoutOfLdap": [undefined, void];  
 };
 
 export type ToWebviewOrCoreFromIdeProtocol = {

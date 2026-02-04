@@ -23,6 +23,7 @@ export function AccountDropdown() {
   const ideMessenger = useContext(IdeMessengerContext);  
   const [hasLdapSession, setHasLdapSession] = useState(false);  
   
+  // Проверяем наличие LDAP сессии  
   useEffect(() => {  
     const checkLdapSession = async () => {  
       try {  
@@ -101,7 +102,7 @@ export function AccountDropdown() {
                 <Divider />  
               </div>  
   
-              {/* LDAP Login/Logout buttons */}  
+              {/* LDAP Login/Logout */}  
               {hasLdapSession ? (  
                 <ListboxOption onClick={handleLdapLogout} value="ldap-logout">  
                   <div className="flex items-center gap-2 py-0.5">  
@@ -117,8 +118,6 @@ export function AccountDropdown() {
                   </div>  
                 </ListboxOption>  
               )}  
-  
-              <Divider />  
   
               <ListboxOption  
                 onClick={() =>  
