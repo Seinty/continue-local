@@ -432,6 +432,7 @@ export class VsCodeExtension {
       quickEdit,
       this.core,
       this.editDecorationManager,
+      this.workOsAuthProvider
     );
 
     // Disabled due to performance issues

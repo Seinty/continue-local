@@ -163,10 +163,15 @@
     },
     "commands": [
       {  
-        "command": "elvees-llm.logout",  
-        "category": "Elvees LLM",  
+        "command": "continue.logout",  
+        "category": "Continue",  
         "title": "Logout from LDAP"  
       },
+      {  
+        "command": "continue.login",  
+        "category": "Continue",  
+        "title": "Login to LDAP"  
+      }, 
       {
         "command": "continue.applyCodeFromChat",
         "category": "Continue",

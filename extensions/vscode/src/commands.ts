@@ -49,6 +49,7 @@ import { Battery } from "./util/battery";
 import { getMetaKeyLabel } from "./util/util";
 import { openEditorAndRevealRange } from "./util/vscode";
 import { VsCodeIde } from "./VsCodeIde";
+import { LdapAuthProvider} from "./stubs/LdapAuthProvider";
 
 let fullScreenPanel: vscode.WebviewPanel | undefined;
 
@@ -129,6 +130,7 @@ const getCommandsMap: (
   quickEdit: QuickEdit,
   core: Core,
   editDecorationManager: EditDecorationManager,
+  ldapAuthProvider?: LdapAuthProvider,
 ) => { [command: string]: (...args: any) => any } = (
   ide,
   extensionContext,
@@ -140,6 +142,7 @@ const getCommandsMap: (
   quickEdit,
   core,
   editDecorationManager,
+  ldapAuthProvider,
 ) => {
   /**
    * Streams an inline edit to the vertical diff manager.
@@ -883,6 +886,28 @@ const getCommandsMap: (
         "editor.action.inlineSuggest.trigger",
       );
     },
+    "continue.login": async () => {  
+      try {  
+        const session = await ldapAuthProvider.createSession([]);  
+        void vscode.window.showInformationMessage("Successfully logged in to LDAP");  
+      } catch (error) {  
+        void vscode.window.showErrorMessage(`LDAP login failed: ${error}`);  
+      }  
+    },  
+      
+    "continue.logout": async () => {  
+      try {  
+        const sessions = await ldapAuthProvider.getSessions();  
+        if (sessions.length > 0) {  
+          await ldapAuthProvider.removeSession(sessions[0].id);  
+          void vscode.window.showInformationMessage("Successfully logged out");  
+        } else {  
+          void vscode.window.showInformationMessage("No active session");  
+        }  
+      } catch (error) {  
+        void vscode.window.showErrorMessage(`Logout failed: ${error}`);  
+      }  
+    },
   };
 };
 
@@ -937,6 +962,8 @@ export function registerAllCommands(
   quickEdit: QuickEdit,
   core: Core,
   editDecorationManager: EditDecorationManager,
+  ldapAuthProvider?: LdapAuthProvider,
+
 ) {
   for (const [command, callback] of Object.entries(
     getCommandsMap(
@@ -950,6 +977,7 @@ export function registerAllCommands(
       quickEdit,
       core,
       editDecorationManager,
+      ldapAuthProvider,
     ),
   )) {
     context.subscriptions.push(
