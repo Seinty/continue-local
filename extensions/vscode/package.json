@@ -92,6 +92,11 @@
     "configuration": {
       "title": "Continue",
       "properties": {
+        "continue.ldapServerUrl": {  
+          "type": "string",  
+          "default": "https://cv7gpufarm:8003",  
+          "description": "LDAP server URL"  
+        },
         "continue.telemetryEnabled": {
           "type": "boolean",
           "default": false,
@@ -157,6 +162,11 @@
       }
     },
     "commands": [
+      {  
+        "command": "elvees-llm.logout",  
+        "category": "Elvees LLM",  
+        "title": "Logout from LDAP"  
+      },
       {
         "command": "continue.applyCodeFromChat",
         "category": "Continue",

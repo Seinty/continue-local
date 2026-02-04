@@ -66,7 +66,7 @@ export class VsCodeMessenger {
   ): void {
     this.inProcessMessenger.externalOn(messageType, handler);
   }
-
+  
   onWebviewOrCore<T extends keyof ToIdeFromWebviewOrCoreProtocol>(
     messageType: T,
     handler: (
@@ -684,6 +684,22 @@ export class VsCodeMessenger {
           const contents = document.getText(range);
           return contents;
         });
+    });
+
+    this.onWebviewOrCore("loginOfLdap", async () => {  
+      try {  
+        await vscode.authentication.getSession("ldap", [], { createIfNone: true });  
+        void vscode.window.showInformationMessage("LDAP login successful");  
+      } catch (error) {  
+        void vscode.window.showErrorMessage(`LDAP login failed: ${error}`);  
+      }  
+    });
+
+    this.onWebviewOrCore("logoutOfLdap", async () => {  
+      const sessions = await this.workOsAuthProvider?.getSessions();  
+      if (sessions && sessions.length > 0) {  
+        await this.workOsAuthProvider.removeSession(sessions[0].id);  
+      }  
     });
 
     this.onWebviewOrCore("getIdeSettings", async (msg) => {
